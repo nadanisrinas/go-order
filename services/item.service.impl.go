@@ -42,3 +42,31 @@ func (isi *ItemServiceImpl) CreateItem(description string, quantity int32) (*mod
 	fmt.Println("New item data:", payload)
 	return &payload, err
 }
+
+func (isi *ItemServiceImpl) FindItem(itemCode string) (models.Item, error) {
+	// fmt.Println("itemCode", itemCode)
+	item := models.Item{}
+	// itemCodeUUID, errUUID := uuid.FromString(itemCode)
+	errFindItem := isi.db.Where("item_code = ?", itemCode).Find(&item).Error
+	if errFindItem != nil {
+		log.Fatal("Error can't find item", errFindItem)
+	}
+
+	return item, errFindItem
+}
+
+func FindItem(itemCode string) (models.Item, error) {
+	fmt.Println("itemCode111", itemCode)
+	db := *&gorm.DB{}
+	isi := *&ItemServiceImpl{}
+	item, err := isi.GetAllItems()
+	fmt.Println("item", item)
+	// itemCodeUUID, errUUID := uuid.FromString(itemCode)
+	errFindItem := db.Where("item_code = ?", itemCode).Find(&item).Error
+	if err != nil || errFindItem != nil {
+		log.Fatal("Error can't find item", errFindItem)
+	}
+	fmt.Println("item121212")
+
+	return *item, errFindItem
+}

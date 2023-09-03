@@ -1,8 +1,12 @@
 package controllers
 
 import (
+	"assignment-2/models"
 	"assignment-2/services"
+	"fmt"
+	"log"
 	"net/http"
+	"reflect"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,11 +29,41 @@ func (ic *ItemController) GetAllItems(ctx *gin.Context) {
 }
 
 func (ic *ItemController) CreateItem(ctx *gin.Context) {
+	var itemRequestBody models.ItemRequestBody
+	if err := ctx.BindJSON(&itemRequestBody); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
 	// var item models.Item
-	itemsResponse, err := ic.itemService.CreateItem("desc1", 3)
+	itemsResponse, err := ic.itemService.CreateItem(itemRequestBody.Description, itemRequestBody.Quantity)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"items": itemsResponse}})
+}
+
+func (ic *ItemController) FindItem(ItemCode string) *models.Item {
+	fmt.Println("reflect.TypeOf(ItemCode)", reflect.TypeOf(ItemCode))
+	// var item models.Item
+	itemsResponse, err := ic.itemService.FindItem(ItemCode)
+	fmt.Println("itemsResponse", itemsResponse)
+	fmt.Println("err1", err)
+	if err != nil {
+		log.Fatal("err find item", err)
+	}
+
+	return &itemsResponse
+}
+func FindItem(ItemCode string) *models.Item {
+	fmt.Println("reflect.TypeOf(ItemCode)", reflect.TypeOf(ItemCode))
+	// var item models.Item
+	itemsResponse, err := services.FindItem(ItemCode)
+	fmt.Println("itemsResponse", itemsResponse)
+	fmt.Println("err1", err)
+	if err != nil {
+		log.Fatal("err find item", err)
+	}
+
+	return &itemsResponse
 }

@@ -56,7 +56,6 @@ func (isi *ItemServiceImpl) FindItem(itemCode string) (models.Item, error) {
 }
 
 func FindItem(itemCode string) (models.Item, error) {
-	fmt.Println("itemCode111", itemCode)
 	db := *&gorm.DB{}
 	isi := *&ItemServiceImpl{}
 	item, err := isi.GetAllItems()
@@ -66,7 +65,6 @@ func FindItem(itemCode string) (models.Item, error) {
 	if err != nil || errFindItem != nil {
 		log.Fatal("Error can't find item", errFindItem)
 	}
-	fmt.Println("item121212")
 
 	return *item, errFindItem
 }

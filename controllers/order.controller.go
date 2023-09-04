@@ -5,6 +5,7 @@ import (
 	"assignment-2/services"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,36 +30,56 @@ func (oc *OrderController) GetAllOrders(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"items": orders}})
 }
 
-func (oc *OrderController) CreateOrder(ctx *gin.Context) {
-	var OrderRequestBody models.OrderRequestBody
-	if err := ctx.BindJSON(&OrderRequestBody); err != nil {
+func (oc *OrderController) DeleteOrder(ctx *gin.Context) {
+	orderID, _ := strconv.Atoi(ctx.Param("id"))
+
+	response, err := oc.orderService.DeleteOrder(orderID)
+	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
 		return
 	}
-	fmt.Println("ooo", OrderRequestBody.Items)
-	for i, v := range OrderRequestBody.Items {
-		fmt.Println("=======>", v.ItemCode)
-		fmt.Println("=======>", &v.ItemCode)
 
-		findOrderResponse := FindItem((v.ItemCode).String())
-		fmt.Println("findOrderResponse", findOrderResponse)
-		if findOrderResponse != nil {
-			_, err := (*&oc.itemService).CreateItem(OrderRequestBody.Items[i].Description, OrderRequestBody.Items[i].Quantity)
-			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"orders": response}})
+}
 
-			}
-			orders, err := oc.orderService.CreateOrder(OrderRequestBody.OrderedAt, OrderRequestBody.Items)
-			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+func (oc *OrderController) UpdateOrder(ctx *gin.Context) {
+	orderID, _ := strconv.Atoi(ctx.Param("id"))
 
-			}
-			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"orders": orders}})
-		} else {
-			fmt.Println("pppp")
-			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "error say"})
+	var OrderRequestBody models.OrderRequestBody
+	if err := ctx.BindJSON(&OrderRequestBody); err != nil {
+		fmt.Println("! nil")
 
-		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+		return
 	}
+
+	fmt.Println("OrderRequestBody", orderID, OrderRequestBody.CustomerName, OrderRequestBody.OrderedAt, OrderRequestBody.Items)
+
+	response, err := oc.orderService.UpdateOrder(orderID, OrderRequestBody.CustomerName, OrderRequestBody.OrderedAt, OrderRequestBody.Items)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"orders": response}})
+}
+
+func (oc *OrderController) CreateOrder(ctx *gin.Context) {
+	var OrderRequestBody models.OrderRequestBody
+	if err := ctx.BindJSON(&OrderRequestBody); err != nil {
+		fmt.Println("! nil")
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
+	orders, err := oc.orderService.CreateOrder(OrderRequestBody.CustomerName, OrderRequestBody.OrderedAt, OrderRequestBody.Items)
+	if err != nil {
+		fmt.Println("! nil")
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": gin.H{"items": orders}})
 
 }

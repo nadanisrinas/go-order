@@ -2,7 +2,6 @@ package services
 
 import (
 	"assignment-2/models"
-	"fmt"
 	"log"
 	"time"
 
@@ -28,19 +27,17 @@ func (osi *OrderServiceImpl) GetAllOrders() (*models.Order, error) {
 }
 
 func (osi *OrderServiceImpl) CreateOrder(
+	customerName string,
 	orderedAt string,
 	items []*models.Item,
 ) (*models.Order, error) {
-	// itemCodeUUID, errUUID := uuid.FromString("ec9232c6-7e93-40ce-867a-2974b216a0f9")
-	const layout = "2006-01-02"
+	const layout = "01-02-2006"
 	orderAtTimeParseFromInput, err := time.Parse(layout, orderedAt)
 
-	// if errUUID != nil {
-	// 	log.Fatal("Error create items data", errUUID)
-	// }
-	payload := models.OrderRequestBody{
-		OrderedAt: orderAtTimeParseFromInput.String(),
-		Items:     items,
+	payload := models.Order{
+		OrderedAt:    orderAtTimeParseFromInput,
+		CustomerName: customerName,
+		Items:        items,
 	}
 
 	orders := models.Order{}
@@ -50,6 +47,45 @@ func (osi *OrderServiceImpl) CreateOrder(
 		log.Fatal("Error create items data", err)
 	}
 
-	fmt.Println("New item data:", payload)
 	return &orders, err
+
+}
+
+func (osi *OrderServiceImpl) DeleteOrder(id int) (*models.Order, error) {
+	orders := &models.Order{}
+	result := osi.db.First(orders, id)
+	if result.Error != nil {
+		log.Fatal("Error get orders data", result.Error)
+	}
+	result = osi.db.Delete(orders)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return orders, result.Error
+}
+
+func (osi *OrderServiceImpl) UpdateOrder(id int, customerName string, orderedAt string, items []*models.Item) (*models.Order, error) {
+	orders := &models.Order{}
+	const layout = "01-02-2006"
+	orderAtTimeParseFromInput, err := time.Parse(layout, orderedAt)
+	if err != nil {
+		log.Fatal("Errorparsing data", err)
+	}
+	result := osi.db.First(orders, id)
+	if result.Error != nil {
+		log.Fatal("Error get orders data", result.Error)
+	}
+
+	payload := models.Order{
+		OrderedAt:    orderAtTimeParseFromInput,
+		CustomerName: customerName,
+		Items:        items,
+	}
+	result = osi.db.Save(&payload)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return orders, result.Error
 }

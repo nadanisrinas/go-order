@@ -1,19 +1,23 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Order struct {
-	Id           uint      `gorm:"primaryKey" json:"order_id"`
+	gorm.Model
+	ID           uint      `gorm:"column:id;primaryKey" json:"id"`
 	CustomerName string    `gorm:"not_null" json:"customer_name"`
 	OrderedAt    time.Time `gorm:"not_null" json:"ordered_at"`
-	// Items        []*Item   `gorm:"foreignkey:id; association_foreignkey:id"`
-	// CreatedAt    time.Time `gorm:"not_null" json:"created_at"`
-	// UpdatedAt    time.Time `gorm:"not_null" json:"updated_at"`
+	Items        []*Item   `gorm:"Foreignkey:ItemID;association_foreignkey:fk_orders_items;" json:"items"`
 }
 
 type OrderRequestBody struct {
 	// *Order
-	Id        uint    `gorm:"primaryKey" json:"order_id"`
-	OrderedAt string  `gorm:"not_null" json:"ordered_at"`
-	Items     []*Item `gorm:"foreignkey:id; association_foreignkey:id" json:"items"`
+	OrderID      uint    `gorm:"primaryKey" json:"order_id"`
+	OrderedAt    string  `gorm:"not_null" json:"ordered_at"`
+	CustomerName string  `gorm:"not_null" json:"customer_name"`
+	Items        []*Item `json:"items"`
 }

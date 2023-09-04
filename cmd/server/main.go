@@ -38,7 +38,7 @@ func StartDB() {
 		log.Fatal("err conn to db: ", err)
 
 	}
-	errMigrate := db.Debug().AutoMigrate(models.Item{}, models.Order{})
+	errMigrate := db.Debug().AutoMigrate(models.Order{}, models.Item{})
 	if errMigrate != nil {
 		log.Fatal("error migrate db", errMigrate)
 	}
@@ -70,7 +70,7 @@ func main() {
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "helath check"})
 	})
 	itemRouteController.ItemRoute(router, itemService)
-	orderRouteController.OrderController(router, orderService)
+	orderRouteController.OrderRoute(router, orderService)
 	fmt.Println("routes running")
 	server.Run(":" + "8080")
 

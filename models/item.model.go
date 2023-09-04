@@ -9,23 +9,17 @@ import (
 
 type Item struct {
 	gorm.Model
-	Id          uint      `gorm:"primaryKey" json:"item_id"`
+	ItemID      uint      `gorm:"primaryKey" json:"-"`
 	ItemCode    uuid.UUID `gorm:"not_null" json:"item_code"`
 	Description string    `gorm:"not_null" json:"description"`
 	Quantity    int32     `gorm:"not_null" json:"quantity"`
-	OrderId     Order     `gorm:"foreignKey:Id; association_foreignkey:OrderId" json:"-"`
-	// CreatedAt   time.Time `gorm:"not_null" json:"created_at"`
-	// UpdatedAt   time.Time `gorm:"not_null" json:"updated_at"`
 }
 
 type ItemResponse struct {
-	Id          uint      `gorm:"primaryKey" json:"item_id"`
-	ItemCode    uuid.UUID `gorm:"not null" json:"item_code"`
-	Description string    `gorm:"not_null" json:"description"`
-	Quantity    int32     `gorm:"not_null" json:"quantity"`
-	OrderID     Order     `gorm:"foreignKey:Id" json:"-"`
-	// CreatedAt   time.Time `json:"created_at,omitempty"`
-	// UpdatedAt   time.Time `json:"updated_at,omitempty"`
+	ItemID      uint      `json:"item_id"`
+	ItemCode    uuid.UUID `json:"item_code"`
+	Description string    `json:"description"`
+	Quantity    int32     `json:"quantity"`
 }
 
 type ItemRequestBody struct {

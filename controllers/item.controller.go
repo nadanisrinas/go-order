@@ -3,10 +3,8 @@ package controllers
 import (
 	"assignment-2/models"
 	"assignment-2/services"
-	"fmt"
 	"log"
 	"net/http"
-	"reflect"
 
 	"github.com/gin-gonic/gin"
 )
@@ -44,11 +42,8 @@ func (ic *ItemController) CreateItem(ctx *gin.Context) {
 }
 
 func (ic *ItemController) FindItem(ItemCode string) *models.Item {
-	fmt.Println("reflect.TypeOf(ItemCode)", reflect.TypeOf(ItemCode))
 	// var item models.Item
 	itemsResponse, err := ic.itemService.FindItem(ItemCode)
-	fmt.Println("itemsResponse", itemsResponse)
-	fmt.Println("err1", err)
 	if err != nil {
 		log.Fatal("err find item", err)
 	}
@@ -56,11 +51,8 @@ func (ic *ItemController) FindItem(ItemCode string) *models.Item {
 	return &itemsResponse
 }
 func FindItem(ItemCode string) *models.Item {
-	fmt.Println("reflect.TypeOf(ItemCode)", reflect.TypeOf(ItemCode))
 	// var item models.Item
 	itemsResponse, err := services.FindItem(ItemCode)
-	fmt.Println("itemsResponse", itemsResponse)
-	fmt.Println("err1", err)
 	if err != nil {
 		log.Fatal("err find item", err)
 	}

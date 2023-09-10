@@ -45,7 +45,7 @@ func (oc *OrderController) DeleteOrder(ctx *gin.Context) {
 func (oc *OrderController) UpdateOrder(ctx *gin.Context) {
 	orderID, _ := strconv.Atoi(ctx.Param("id"))
 
-	var OrderRequestBody models.OrderRequestBody
+	var OrderRequestBody models.OrderCreateRequestBody
 	if err := ctx.BindJSON(&OrderRequestBody); err != nil {
 		fmt.Println("! nil")
 
@@ -65,13 +65,29 @@ func (oc *OrderController) UpdateOrder(ctx *gin.Context) {
 }
 
 func (oc *OrderController) CreateOrder(ctx *gin.Context) {
-	var OrderRequestBody models.OrderRequestBody
+	var OrderRequestBody models.OrderCreateRequestBody
+
 	if err := ctx.BindJSON(&OrderRequestBody); err != nil {
 		fmt.Println("! nil")
 
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
 		return
 	}
+
+	for _, v := range OrderRequestBody.Items {
+		item, err := oc.itemService.FindItem(v.ItemCode.String())
+		if err != nil {
+			fmt.Println("! nil")
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+			return
+		}
+		if v.ItemCode != item.ItemCode {
+			fmt.Println("! nil")
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "can't find item code"})
+			return
+		}
+	}
+
 	orders, err := oc.orderService.CreateOrder(OrderRequestBody.CustomerName, OrderRequestBody.OrderedAt, OrderRequestBody.Items)
 	if err != nil {
 		fmt.Println("! nil")

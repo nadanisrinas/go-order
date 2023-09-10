@@ -37,7 +37,7 @@ func (osi *OrderServiceImpl) CreateOrder(
 	payload := models.Order{
 		OrderedAt:    orderAtTimeParseFromInput,
 		CustomerName: customerName,
-		Items:        items,
+		// Items:        items,
 	}
 
 	orders := models.Order{}
@@ -80,7 +80,7 @@ func (osi *OrderServiceImpl) UpdateOrder(id int, customerName string, orderedAt 
 	payload := models.Order{
 		OrderedAt:    orderAtTimeParseFromInput,
 		CustomerName: customerName,
-		Items:        items,
+		// Items:        items,
 	}
 	result = osi.db.Save(&payload)
 	if result.Error != nil {

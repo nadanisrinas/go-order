@@ -50,12 +50,3 @@ func (ic *ItemController) FindItem(ItemCode string) *models.Item {
 
 	return &itemsResponse
 }
-func FindItem(ItemCode string) *models.Item {
-	// var item models.Item
-	itemsResponse, err := services.FindItem(ItemCode)
-	if err != nil {
-		log.Fatal("err find item", err)
-	}
-
-	return &itemsResponse
-}

@@ -8,11 +8,12 @@ import (
 )
 
 type Item struct {
-	gorm.Model
-	ItemID      uint      `gorm:"primaryKey" json:"-"`
+	ID          uint      `gorm:"primaryKey" json:"-"`
+	ItemID      uint      `gorm:"not_null" json:"-"`
 	ItemCode    uuid.UUID `gorm:"not_null" json:"item_code"`
 	Description string    `gorm:"not_null" json:"description"`
 	Quantity    int32     `gorm:"not_null" json:"quantity"`
+	OrderId     int64     `gorm:"foreignkey:fk_orders_items;" json:"order_id"`
 }
 
 type ItemResponse struct {

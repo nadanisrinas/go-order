@@ -54,17 +54,3 @@ func (isi *ItemServiceImpl) FindItem(itemCode string) (models.Item, error) {
 
 	return item, errFindItem
 }
-
-func FindItem(itemCode string) (models.Item, error) {
-	db := *&gorm.DB{}
-	isi := *&ItemServiceImpl{}
-	item, err := isi.GetAllItems()
-	fmt.Println("item", item)
-	// itemCodeUUID, errUUID := uuid.FromString(itemCode)
-	errFindItem := db.Where("item_code = ?", itemCode).Find(&item).Error
-	if err != nil || errFindItem != nil {
-		log.Fatal("Error can't find item", errFindItem)
-	}
-
-	return *item, errFindItem
-}

@@ -31,7 +31,7 @@ func (osi *OrderServiceImpl) CreateOrder(
 	orderedAt string,
 	items []*models.Item,
 ) (*models.Order, error) {
-	const layout = "01-02-2006"
+	const layout = "2006-01-02 07:00:00+07"
 	orderAtTimeParseFromInput, err := time.Parse(layout, orderedAt)
 
 	payload := models.Order{
@@ -40,14 +40,14 @@ func (osi *OrderServiceImpl) CreateOrder(
 		// Items:        items,
 	}
 
-	orders := models.Order{}
+	// orders := models.Order{}
 
 	err = osi.db.Create(&payload).Error
 	if err != nil {
 		log.Fatal("Error create items data", err)
 	}
 
-	return &orders, err
+	return &payload, err
 
 }
 

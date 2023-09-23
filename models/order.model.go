@@ -5,7 +5,7 @@ import (
 )
 
 type Order struct {
-	ID           uint      `gorm:"column:id;primaryKey" json:"id"`
+	ID           int32     `gorm:"column:id;primaryKey" json:"id"`
 	CustomerName string    `gorm:"not_null" json:"customer_name"`
 	OrderedAt    time.Time `gorm:"not_null" json:"ordered_at"`
 	// Items        []*Item   `gorm:"Foreignkey:ItemID" json:"items"`
@@ -13,7 +13,7 @@ type Order struct {
 
 type OrderCreateRequestBody struct {
 	// *Order
-	OrderID      uint    `gorm:"primaryKey" json:"order_id"`
+	OrderID      int32   `gorm:"primaryKey" json:"order_id"`
 	OrderedAt    string  `gorm:"not_null" json:"ordered_at"`
 	CustomerName string  `gorm:"not_null" json:"customer_name"`
 	Items        []*Item `json:"items"`

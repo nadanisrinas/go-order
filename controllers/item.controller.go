@@ -33,7 +33,7 @@ func (ic *ItemController) CreateItem(ctx *gin.Context) {
 		return
 	}
 	// var item models.Item
-	itemsResponse, err := ic.itemService.CreateItem(itemRequestBody.Description, itemRequestBody.Quantity)
+	itemsResponse, err := ic.itemService.CreateItem(itemRequestBody.Description, itemRequestBody.Quantity, itemRequestBody.OrderId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
 		return

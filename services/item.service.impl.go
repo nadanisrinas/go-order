@@ -27,12 +27,13 @@ func (isi *ItemServiceImpl) GetAllItems() (*models.Item, error) {
 	return &items, result.Error
 }
 
-func (isi *ItemServiceImpl) CreateItem(description string, quantity int32) (*models.Item, error) {
+func (isi *ItemServiceImpl) CreateItem(description string, quantity int32, orderId int32) (*models.Item, error) {
 	randomUuid := uuid.NewV4()
 	payload := models.Item{
 		Description: description,
 		Quantity:    quantity,
 		ItemCode:    randomUuid,
+		OrderId:     orderId,
 	}
 	err := isi.db.Create(&payload).Error
 	if err != nil {

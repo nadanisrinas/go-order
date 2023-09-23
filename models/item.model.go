@@ -13,7 +13,7 @@ type Item struct {
 	ItemCode    uuid.UUID `gorm:"not_null" json:"item_code"`
 	Description string    `gorm:"not_null" json:"description"`
 	Quantity    int32     `gorm:"not_null" json:"quantity"`
-	OrderId     int64     `gorm:"foreignkey:fk_orders_items;" json:"order_id"`
+	OrderId     int32     `gorm:"foreignkey:fk_orders_items;" json:"order_id"`
 }
 
 type ItemResponse struct {
@@ -26,6 +26,7 @@ type ItemResponse struct {
 type ItemRequestBody struct {
 	Description string
 	Quantity    int32
+	OrderId     int32
 }
 
 // hook BeforeCreate will set a UUID rather than numeric ID.

@@ -10,8 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var ItemControllerInit *ItemController
-
 type OrderController struct {
 	orderService services.OrderService
 	itemService  services.ItemService
@@ -66,7 +64,8 @@ func (oc *OrderController) UpdateOrder(ctx *gin.Context) {
 
 func (oc *OrderController) CreateOrder(ctx *gin.Context) {
 	var OrderRequestBody models.OrderCreateRequestBody
-
+	var items *models.Item
+	var errItems error
 	if err := ctx.BindJSON(&OrderRequestBody); err != nil {
 		fmt.Println("! nil")
 
@@ -87,8 +86,27 @@ func (oc *OrderController) CreateOrder(ctx *gin.Context) {
 			return
 		}
 	}
-
 	orders, err := oc.orderService.CreateOrder(OrderRequestBody.CustomerName, OrderRequestBody.OrderedAt, OrderRequestBody.Items)
+	for _, v := range OrderRequestBody.Items {
+		item, err := oc.itemService.FindItem(v.ItemCode.String())
+		if err != nil {
+			fmt.Println("! nil")
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+			return
+		}
+		if v.ItemCode == item.ItemCode {
+			items, errItems = oc.itemService.CreateItem(item.Description, item.Quantity, orders.ID)
+			if errItems != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+				return
+			}
+
+		} else {
+			fmt.Println("! nil")
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "can't find item code"})
+			return
+		}
+	}
 	if err != nil {
 		fmt.Println("! nil")
 
@@ -96,6 +114,6 @@ func (oc *OrderController) CreateOrder(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": gin.H{"items": orders}})
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": gin.H{"items": items, "orders": orders}})
 
 }
